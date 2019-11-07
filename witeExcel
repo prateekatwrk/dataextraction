@@ -1,0 +1,59 @@
+if __name__ == "__main__":
+   start = timer()
+   final = met_data()
+   
+   
+   workbook = xlsxwriter.Workbook('Toyota_indeed_data.xlsx') 
+   worksheet = workbook.add_worksheet("My sheet")         
+   row = 0
+   col = 0
+   
+   
+   for sixD,zeroD,oneD,twoD,threeD,fourD,fiveD in (final): 
+       for rateing in sixD:
+           #worksheet.write('rating')
+           worksheet.write(row, col, rateing) 
+           row += 1
+       row = 0 
+       for reviewTitle in zeroD:
+           # worksheet.write('comment')
+          
+           worksheet.write(row, col + 1, reviewTitle) 
+           row += 1
+       row = 0
+
+       for jobtitle in oneD:
+           #worksheet.write('jobtitle')
+           worksheet.write(row, col +2, jobtitle) 
+           row += 1
+       row = 0 
+       for jobtitle2 in twoD:
+           #worksheet.write('rating')
+           worksheet.write(row, col +3, jobtitle2) 
+           row += 1
+       row = 0 
+       
+       for reviewdata in threeD:
+           #worksheet.write('rating')
+           worksheet.write(row, col +4, reviewdata) 
+           row += 1
+       row = 0 
+       for reviewerjoblocation in fourD:
+           #worksheet.write('rating')
+           worksheet.write(row, col +5, reviewerjoblocation) 
+           row += 1
+       row = 0 
+       for reviewtext in fiveD:
+           #worksheet.write('rating')
+           worksheet.write(row, col +6, reviewtext) 
+           row += 1
+       row = 0 
+       
+       
+       
+       
+       
+       
+   workbook.close()   
+   duration = timer() - start
+   print(duration) 
