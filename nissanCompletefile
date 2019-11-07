@@ -1,0 +1,156 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+
+#Prateek
+"""
+
+import csv,os
+import requests
+import sys
+from bs4 import BeautifulSoup
+import pandas as pd
+from timeit import default_timer as timer
+import xlsxwriter
+
+
+def met_data():
+    zeroD = []
+    oneD = []
+    twoD = []
+    threeD = []
+    fourD =[]
+    fiveD=[]
+    sixD = []
+    sevenD= []
+    
+    for page in range(1,78):
+        zeroD.append('!@#$%')
+        oneD.append('!@#$%')
+        twoD.append('!@#$%')
+        threeD.append('!@#$%')
+        fourD.append('!@#$%')
+        fiveD.append('!@#$%')
+        sixD.append('!@#$%')
+        sevenD.append('!@#$%')
+                      
+        file = open('dealerraterData/Met-Data/%i.html'% page, 'rb')
+
+        plain_text = file.read()
+
+        soup = BeautifulSoup(plain_text, "lxml")
+            
+        #Date
+        for div in soup.findAll('div', {'class': 'italic col-xs-6 col-sm-12 pad-none margin-none font-20'}):
+            b = div.get_text()
+            b = b.replace(',', '')
+            zeroD.append(b)
+            
+        #type of visit
+        for div in soup.findAll('div', {'class': 'col-xs-12 hidden-xs pad-none margin-top-sm small-text dr-grey'}):
+            a = div.get_text()
+            oneD.append(a)
+            
+        #rating
+            #twoD
+            
+        #Heading
+        for div in soup.findAll('div', {'class': 'margin-bottom-sm line-height-150'}):
+            a = div.get_text()
+            a = a.replace('\n', '')
+            a = a.split('"')
+            threeD.append(a[1]) 
+        
+        #content
+        for div in soup.findAll('p', {'class': 'font-16 review-content margin-bottom-none line-height-25'}):
+                e = div.get_text()
+                fourD.append(e) 
+        
+        #Employee worked with
+        for div in soup.findAll('div', {'class': 'col-xs-12 lt-grey pad-left-none employees-wrapper'}):
+            a = div.get_text()
+            a = a.replace('\n', '').replace(' ', '').replace('EmployeesWorkedWith', '')
+            a = a.replace('1.0','').replace('2.0','').replace('3.0','').replace('4.0','').replace('5.0','')
+            a = a.replace('\r',',')
+            a = a.replace(',,',',')
+            fiveD.append(a)
+           
+        #NISSAN Fontana Resonse date
+        for div in soup.findAll('div', {'class': 'td italic-bold font-16 no-wrap pad-right-md hidden-xs'}):
+            a = div.get_text()
+            a = a.replace(',', '').replace('- ','')
+            sixD.append(a)
+ 
+        #Fontana Nissan Response
+        for div in soup.findAll('p', {'class': 'margin-bottom-none word-break pre font-14 review-response'}):
+            a = div.get_text()
+            #a = a.replace(',', '').replace('- ','')
+            sevenD.append(a)    
+            
+        
+    yield zeroD,oneD,twoD,threeD,fourD,fiveD,sixD,sevenD
+     
+
+if __name__ == "__main__":
+   start = timer()
+   final = met_data()
+   
+   
+   workbook = xlsxwriter.Workbook('Toyota_indeed_data.xlsx') 
+   worksheet = workbook.add_worksheet("My sheet")         
+   row = 0
+   col = 0
+   
+   
+   for zeroD,oneD,twoD,threeD,fourD,fiveD,sixD,sevenD in (final): 
+       for Date in zeroD:
+           #worksheet.write('Date')
+           worksheet.write(row, col, Date) 
+           row += 1
+       row = 0 
+       for visit in oneD:
+           # worksheet.write('type of visit')
+           worksheet.write(row, col + 1, visit) 
+           row += 1
+       row = 0
+       '''
+       for jobtitle in twoD:
+           #worksheet.write('jobtitle')
+           worksheet.write(row, col +2, jobtitle) 
+           row += 1
+       row = 0 
+       '''
+       for Heading in threeD:
+           #worksheet.write('Heading')
+           worksheet.write(row, col +3, Heading) 
+           row += 1
+       row = 0 
+       
+       for content in fourD:
+           #worksheet.write('content')
+           worksheet.write(row, col +4, content) 
+           row += 1
+       row = 0 
+       for Employee in fiveD:
+           #worksheet.write('Employee worked with')
+           worksheet.write(row, col +5, Employee) 
+           row += 1
+       row = 0 
+       for Resonsedate in sixD:
+           #worksheet.write('NISSAN Fontana Resonse date')
+           worksheet.write(row, col +6, Resonsedate) 
+           row += 1
+       row = 0 
+       for NissanResponse in sevenD:
+           #worksheet.write('Fontana Nissan Response')
+           worksheet.write(row, col +7, NissanResponse) 
+           row += 1
+       row = 0
+       
+       
+       
+   workbook.close()   
+   duration = timer() - start
+   print(duration) 
